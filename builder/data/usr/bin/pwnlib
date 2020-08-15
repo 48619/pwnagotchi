@@ -12,9 +12,17 @@ blink_led() {
   sleep 0.3
 }
 
-# check if brcm is stuck
+# check if brcm is bugged
 check_brcm() {
   if [[ "$(journalctl -n10 -k --since -5m | grep -c 'brcmf_cfg80211_nexmon_set_channel.*Set Channel failed')" -ge 5 ]]; then
+    return 1
+  fi
+  return 0
+}
+
+# check if brcm is stuck
+stuck_brcm() {
+  if [[ "$(journalctl -n10 -k --since -5m | grep -c 'brcmf_sdio_dpc: failed backplane access over SDIO, halting operation')" -ge 1 ]]; then
     return 1
   fi
   return 0

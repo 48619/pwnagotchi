@@ -9,6 +9,8 @@ if is_crypted_mode; then
   done
 fi
 
+sleep 60
+
 # blink 10 times to signal ready state
 blink_led 10 &
 
