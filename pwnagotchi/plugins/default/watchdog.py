@@ -22,12 +22,16 @@ class Watchdog(plugins.Plugin):
         """
         logging.info("Watchdog plugin loaded.")
 
+        if 'face' not in self.options:
+            self.options['face'] = ">++('>"
+
     def on_epoch(self, agent, epoch, epoch_data):
         # get last 10 lines
-        last_lines = ''.join(list(TextIOWrapper(subprocess.Popen(['journalctl','-n10','-k', '--since', '-5m'],
+        last_lines = ''.join(list(TextIOWrapper(subprocess.Popen(['journalctl','-n10','-k', '--since', '-1m'],
                                                 stdout=subprocess.PIPE).stdout))[-10:])
         if len(self.pattern.findall(last_lines)) >= 5:
             display = agent.view()
+            display.set('face', self.options['face'])
             display.set('status', 'Blind-Bug detected. Restarting.')
             display.update(force=True)
             logging.info('[WATCHDOG] Blind-Bug detected. Restarting.')
